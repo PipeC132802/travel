@@ -11,17 +11,13 @@ class Places(models.Model):
 
 
 class Images(models.Model):
-    def photo_path(instance, filename):
-        filename = 'travel_{0}'.format(datetime.now().strftime("%Y-%m-%d-%H-%M-%S%f"))
-        return 'travellers/{0}'.format(filename + ".jpg")
-
-    image = models.ImageField(upload_to=photo_path, blank=True)
+    image = models.URLField(blank=True, null=True)
     name = models.CharField(max_length=50, null=True, blank=True)
 
 
 class UserPlaces(models.Model):
-    place = models.ForeignKey(Places, on_delete=models.CASCADE)
+    place = models.ForeignKey(Places, on_delete=models.CASCADE, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    photos = models.ForeignKey(Images, on_delete=models.CASCADE)
+    photos = models.ManyToManyField(Images, blank=True)
     date = models.DateField(blank=True, null=True)
-    status = models.IntegerField()  # 1 visited, 2 favorite, 3 I want
+    status = models.IntegerField(blank=True, null=True)  # 1 visited, 2 favorite, 3 I want

@@ -15,10 +15,11 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Images
 
 
-class TravellersSerializer(serializers.ModelSerializer):
-    place = PlacesSerializer(read_only=True)
-    modules = ImageSerializer(many=True)
+class UserPlacesSerializer(serializers.ModelSerializer):
+    place = PlacesSerializer()
+    photos = ImageSerializer(many=True, required=False)
 
     class Meta:
-        fields = '__all__'
+        fields = ('place', 'photos', 'user', 'status', 'date')
         model = UserPlaces
+
