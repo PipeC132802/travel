@@ -1,9 +1,14 @@
 from django.urls import path, include
+from rest_framework import routers
+
 from .views import *
+
+api = routers.SimpleRouter()
 
 urlpatterns = [
     path('', include('dj_rest_auth.urls')),
-    path('registration/', include('rest_auth.registration.urls'))
+    path('registration/', include('rest_auth.registration.urls')),
+    path('', include(api.urls))
 ]
 
 """path('user-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
