@@ -5,7 +5,7 @@ from api.places.models import Places, Images, UserPlaces
 
 class PlacesSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ('lat', 'lng', 'name')
         model = Places
 
 
@@ -20,6 +20,5 @@ class UserPlacesSerializer(serializers.ModelSerializer):
     photos = ImageSerializer(many=True, required=False)
 
     class Meta:
-        fields = ('place', 'photos', 'user', 'status', 'date')
+        fields = ('id', 'place', 'photos', 'user', 'status', 'date')
         model = UserPlaces
-

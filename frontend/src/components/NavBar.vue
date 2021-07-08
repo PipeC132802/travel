@@ -1,13 +1,15 @@
 <template>
   <v-app-bar
     dark
-    src="https://picsum.photos/seed/travel/1920/1080?random=1&blur=2"
+    src="https://picsum.photos/seed/travel/1920/1080?random=1&blur=5"
     absolute
+    class="nav-bar"
+    
   >
     <div class="d-flex align-center">
       <v-img
         alt="Tu viaje"
-        class="shrink mx-3"
+        class="mx-3"
         contain
         src="@/assets/logo.png"
         transition="scale-transition"
@@ -15,15 +17,10 @@
       />
 
       <h2>TU VIAJE</h2>
-    </div>
-
+    </div>      
     <v-spacer></v-spacer>
-
     <div>
-      <GmapAutocomplete @place_changed="setPlace" />
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
+      
       <v-btn icon class="mx-2">
         <v-avatar color="primary" size="35">{{
           user.username.slice(0, 1)
@@ -51,9 +48,7 @@ export default {
   methods: {
     
     ...mapMutations(["setAuthInfo"]),
-    setPlace(place) {
-      this.currentPlace = place;
-    },
+    
     logout() {
       fetch(this.baseUrl + this.logoutEndpoint, {
         method: "POST",
@@ -75,5 +70,10 @@ export default {
 };
 </script>
 
-<style>
+
+<style >
+.nav-bar{
+  z-index: 1000;
+}
 </style>
+

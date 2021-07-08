@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { readCookie, setCookie, removeCookie } from "../functions/cookies.js"
+import {fetchApi} from "../functions/fetchApi.js"
 import router from '../router'
 
 Vue.use(Vuex)
-const url = "http://127.0.0.1:8000/api/v1.0/";
+
 export default new Vuex.Store({
   state: {
     authentication: {
@@ -19,8 +20,12 @@ export default new Vuex.Store({
       status: false
     },
     user: {
-      username: "Tú"
+      username: "Tú",
+      first_name: "",
+      last_name: "",
+      pk: null
     },
+    places: []
   },
   mutations: {
     changeSnackbarState(state, snackbar) {
@@ -33,12 +38,14 @@ export default new Vuex.Store({
     setUserInfo(state, user) {
       state.user = user;
     },
-
+    addPlace(state, places) {
+      state.places = places
+    }
   },
   actions: {
-    getUserData({ commit }) {
+    getUserData({ commit }, endpoint) {
       let token = readCookie("token");
-      fetch(url + "auth/user/", {
+      fetch(endpoint, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -47,13 +54,13 @@ export default new Vuex.Store({
           if (response.status >= 400) throw Error
           return response.json()
         })
-        .then(response => { 
-          commit('setUserInfo', response); 
+        .then(response => {
+          commit('setUserInfo', response);
           commit('setAuthInfo', {
             accessToken: token,
             refreshToken: null,
             userIsAuthenticated: true,
-          }); 
+          });
         })
         .catch(() => {
           commit('setAuthInfo', {
@@ -62,18 +69,23 @@ export default new Vuex.Store({
             userIsAuthenticated: false,
           });
           removeCookie("token")
-          router.push({name:"Login"});
-        }
-
-        );
+          router.push({ name: "Login" });
+        });
     },
-
+    getUserPlaces({commit}, elements){
+      if (elements.conf.headers.Authorization.includes("null"))
+      elements.conf.headers.Authorization = "Bearer " + readCookie("token");
+      fetchApi(elements.endpoint, elements.conf)
+      .then((response) => {
+        commit('addPlace', response)
+        
+      })
+    }
   },
   modules: {
   },
   getters: {
     loggedIn(state) {
-      
       return !!state.authentication.accessToken
     }
   }
