@@ -27,12 +27,10 @@
         @focusout="show = false"
       />
     </GmapMap>
-    <v-dialog v-model="show" width="500">
-      <v-card v-if="show" class="mx-auto" elevation="3">
+    <v-dialog v-model="show" width="400">
+      <v-card class="mx-auto" elevation="3">
         <place-info :place="currentPlace" />
-        <v-card-actions>
-          <v-btn color="error darken-2" @click="show = false"> cerrar </v-btn>
-        </v-card-actions>
+        
       </v-card>
     </v-dialog>
     <v-overlay @click="overlay = false" :value="overlay"></v-overlay>
@@ -40,7 +38,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import PlaceInfo from "../components/PlaceInfo.vue";
 export default {
   name: "Home",
@@ -96,19 +94,19 @@ export default {
     this.getPlaces(paramenters);
   },
   computed: {
-    ...mapState(["baseUrl", "authentication", "places"]),
+    ...mapState(["baseUrl", "authentication", "places", "user"]),
   },
   methods: {
     ...mapActions({
       checkUser: "getUserData",
-      getPlaces: "getUserPlaces",
+      getPlaces: "userPlaces",
     }),
+    ...mapMutations(["addPlace"]),
     infoClicked(context) {
       console.log(context);
     },
     pinSelected(place) {
       this.currentPlace = place;
-
       this.$refs.mapRef.$mapPromise.then((map) => {
         this.center = {
           lat: map.center.lat(),
@@ -118,17 +116,29 @@ export default {
       });
       setTimeout(() => {
         this.center = place.place;
-        this.zoom = 10;
+        this.zoom = 12;
         this.show = true;
       }, 50);
     },
     setPlace(place) {
       this.overlay = false;
-      let ss = {
+      let geometry = {
         lng: place.geometry.location.lng(),
         lat: place.geometry.location.lat(),
+        name: place.formatted_address
       };
-      console.log(ss);
+      var place_obj = {
+        date: null,
+        photos: [],
+        place: geometry,
+        status: 0,
+        user: this.user.pk,
+      };
+      let placesTemp = this.places;
+      placesTemp.push(place_obj);
+      this.addPlace(placesTemp)
+      this.center = geometry;
+      this.zoom = 10;
     },
     iconPreferences(place) {
       let url = "";
@@ -149,7 +159,10 @@ export default {
         default:
           return "";
       }
-      return { url: url };
+      return { url: url,
+      scaledSize: {width: 20, height: 30, f: 'px', b: 'px',},
+      size: {width: 20, height: 30, f: 'px', b: 'px',},
+       };
     },
   },
 };

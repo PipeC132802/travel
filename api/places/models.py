@@ -13,6 +13,7 @@ class Places(models.Model):
 class Images(models.Model):
     image = models.URLField(blank=True, null=True)
     name = models.CharField(max_length=50, null=True, blank=True)
+    meta = models.TextField(blank=True, null=True)
 
 
 class UserPlaces(models.Model):

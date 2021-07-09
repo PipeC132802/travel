@@ -8,6 +8,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    imgStorage: {
+      uri: 'https://api.imgbb.com/1/upload',
+      key: '92a2d2e3986a3c0235eff2cde14a62d8'
+    },
     authentication: {
       accessToken: null,
       refreshToken: null,
@@ -72,14 +76,14 @@ export default new Vuex.Store({
           router.push({ name: "Login" });
         });
     },
-    getUserPlaces({commit}, elements){
+    userPlaces({commit}, elements){
       if (elements.conf.headers.Authorization.includes("null"))
       elements.conf.headers.Authorization = "Bearer " + readCookie("token");
       fetchApi(elements.endpoint, elements.conf)
       .then((response) => {
         commit('addPlace', response)
-        
       })
+    
     }
   },
   modules: {
